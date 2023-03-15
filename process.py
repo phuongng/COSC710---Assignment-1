@@ -6,7 +6,7 @@ from dijkstar import Graph, find_path, NoPathError
 graph = Graph()
 nodes = []
 
-with open("graph.txt", 'r') as f:
+with open("graph_test1.txt", 'r') as f:
     for line in f.readlines():
         strList = line.split(' ')
 
@@ -21,26 +21,95 @@ with open("graph.txt", 'r') as f:
             nodes.append(int(strList[1]))
 
 # verify
+print("Graph:")
 print(graph)
-try:
-    print(find_path(graph, 1,8))
-except NoPathError:
-    print("No path found!")
+print("===========================================================================\n")
 
 # Calculate degree for each node
-# For each node, go through all the graph and for each link, add 1
-# print("Degrees:")
-# for node in nodes:
-#     if node in graph:
-#         degree = len(graph[node])/2
-#         print(f'Node {node}: {degree}')
-#     else:
-#         print(f'Node {node}: 0')
+print("Degrees:")
+for node in nodes:
+    if node in graph:
+        degree = len(graph[node])
+        print(f'Node {node}: {degree}')
+    else:
+        print(f'Node {node}: 0')
 
 # Calculate betweenness for each node
+print("===========================================================================\n")
+print("Betweenness:")
+visited = dict.fromkeys(nodes, 0)
+paths = []
+global_vars = dict.fromkeys(["min_length"], 1000000000)
+def dfs(current, end, between_node, len, isBetween):
+
+    if visited[current]:
+        return
+
+    if current == end:
+        paths.append([isBetween, len])
+        visited[current] = 0
+        if len < global_vars["min_length"]:
+            global_vars["min_length"] = len
+        return
+
+    # Optimization not to go through any path in case a shorter one was already found
+    if len + 1 > global_vars["min_length"]:
+        return
+
+    if current == between_node:
+        global_vars["isBetween"] = 1
+
+    visited[current] = 1
+
+    for node in graph[current]:
+        if current == between_node or isBetween == 1:
+            flag = 1
+        else:
+            flag = 0
+        dfs(node, end, between_node, len+1, flag)
+
+    visited[current] = 0
+
+def initDfs(paths, visited, global_vars):
+    paths.clear()
+    visited = dict.fromkeys(nodes, 0)
+    global_vars["min_length"] = 1000000000
+
+for node in nodes:
+
+    betweeness = 0.0
+    for i in nodes:
+        if i == node:
+            continue
+        for j in nodes:
+            if j == node or i == j or i > j:
+                continue
+
+            # print (f'{i} - {j} - {node}')
+            dfs(i,j, node, 0, 0)
+
+            shortest_count = 0
+            between_count = 0
+            for path in paths:
+
+                if path[1] == global_vars["min_length"]:
+                    shortest_count = shortest_count + 1
+
+                    if path[0] == 1:
+                        between_count = between_count + 1
+
+            betweeness = betweeness + (float(between_count)/float(shortest_count))
+
+            # print(f'{i}, {j}, min_len: {global_vars["min_length"]} betweeness: {between_count}/{shortest_count}')
+            # print(paths)
+            # print(betweeness)
+            initDfs(paths, visited, global_vars)
+
+    print(f'Node {node}: {betweeness}')
 
 
 # Calculate closeness for each node
+print("===========================================================================\n")
 print("Closeness:")
 for i in nodes:
 
@@ -59,7 +128,7 @@ for i in nodes:
 
     closeness = (len(nodes)-1) / shortestPathSum
     print(f'Node {i}: {closeness}')
-
+print("===========================================================================\n")
 
 
 # Calculate Clustering Coefficient for each node
