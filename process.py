@@ -131,5 +131,32 @@ for i in nodes:
 print("===========================================================================\n")
 
 
-# Calculate Clustering Coefficient for each node
+# Calculate Clustering Coefficient for each node:  (2 * Number of Neighbor Connections)/(Degree * (Degree-1))
+print("Clustering Coefficient:")
+for node in nodes:
+    if node in graph:
+        neighbors = graph[node]
+        neighborConnections = 0
+        degree = len(neighbors)
+        # print(f'Node {node}: {neighbors}')
+
+        if degree > 1:
+            #Find first neighbor of current node
+            for node1 in neighbors:
+                neighborsNext = graph.get(node1, [])
+                
+                #Check if first neighbor has similar neighbor as current node
+                for node2 in neighborsNext:
+                    if node2 in neighbors:
+                        # print(node1, node2)
+                        neighborConnections += 1
+                        # print(f'Node {node}: {neighborConnections}')
+                        
+            # Don't need to multiply neighbor connections by 2 since we transformed to a directed graph
+            clusterCoeff = (neighborConnections) / (degree * (degree - 1))
+            print(f'Node {node}: {clusterCoeff}')
+    else:
+        print(f'Node {node}: 0')
+print("===========================================================================\n")
+
 
