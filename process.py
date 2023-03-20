@@ -141,7 +141,7 @@ for node in nodes:
         # print(f'Node {node}: {neighbors}')
 
         if degree > 1:
-            #Find first neighbor of current node
+            #Find neighbors of current neighbor of current node
             for node1 in neighbors:
                 neighborsNext = graph.get(node1, [])
                 
