@@ -5,7 +5,6 @@ from dijkstar import Graph, find_path, NoPathError
 # Read graph file
 graph = Graph()
 nodes = []
-nodesDF = pd.DataFrame(nodes, columns=['Nodes', 'Degree', 'Betweenness', 'Closeness', 'Cluster Coefficient'])
 
 with open("graph_test1.txt", 'r') as f:
     for line in f.readlines():
@@ -188,10 +187,10 @@ for node in nodes:
     else:
         print(f'Node {node}: 0')
 
-print("===========================================================================\n")
-
 # Add Closeness to final dataframe
 nodesDF['Cluster Coeff'] = clusterCoeffArray
+print("===========================================================================\n")
+
 
 
 # Sort Arrays by characteristics
