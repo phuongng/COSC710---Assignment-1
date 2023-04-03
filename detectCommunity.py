@@ -14,6 +14,16 @@ def CalculateDensity(graph, new_community):
 
 def updateGraph(graph, community):
     # Remove all nodes  (with their edges) that are not linked to any other nodes outside new_community
+    for node in community:
+        remove_flag = True
+        for neighbor in graph[node]:
+            if neighbor not in community:
+                remove_flag = False
+                break
+
+        if remove_flag:
+            graph.remove_node(node)
+
     return graph
 
 # Read graph file
@@ -53,5 +63,5 @@ while graph.node_count > 0:
         density = CalculateDensity(graph, new_community)
         node = next_node
 
-    updateGraph(graph, new_community)
+    graph = updateGraph(graph, new_community)
     community_list.append(new_community)
