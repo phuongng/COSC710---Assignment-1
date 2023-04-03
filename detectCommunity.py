@@ -4,7 +4,18 @@ from dijkstar import Graph
 
 #Methods
 def FindHighestDegreeNode (graph):
-    return "x"
+    highest_degree_node = None
+    
+    for node in nodes:
+        if node in graph:
+            degree = len(graph[node])
+            
+            if highest_degree_node is None:
+                highest_degree_node = node
+            elif degree > len(graph[highest_degree_node]):
+                highest_degree_node = node
+
+    return highest_degree_node
 
 def FindHighestDegreeNeighbor (graph, node):
     return "x"
