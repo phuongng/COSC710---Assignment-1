@@ -17,8 +17,21 @@ def FindHighestDegreeNode (graph):
 
     return highest_degree_node
 
+
 def FindHighestDegreeNeighbor (graph, node):
-    return "x"
+    highest_degree_neighbor = None
+    
+    for neighbor in graph[node]:
+        if neighbor in graph:
+            degree = len(graph[neighbor])
+
+            if highest_degree_neighbor is None:
+                highest_degree_neighbor = neighbor
+            elif degree > len(graph[highest_degree_neighbor]):
+                highest_degree_neighbor = neighbor
+
+    return highest_degree_neighbor
+
 
 def CalculateDensity(graph, new_community):
     return .6
