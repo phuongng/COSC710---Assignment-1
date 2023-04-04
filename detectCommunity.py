@@ -18,11 +18,11 @@ def FindHighestDegreeNode (graph):
     return highest_degree_node
 
 
-def FindHighestDegreeNeighbor (graph, node):
+def FindHighestDegreeNeighbor (graph, node, community):
     highest_degree_neighbor = None
     
     for neighbor in graph[node]:
-        if neighbor in graph:
+        if neighbor in graph and neighbor not in community:
             degree = len(graph[neighbor])
 
             if highest_degree_neighbor is None:
@@ -33,8 +33,19 @@ def FindHighestDegreeNeighbor (graph, node):
     return highest_degree_neighbor
 
 
+# The `CalculateDensity` function takes a graph object and a list of nodes representing a community and calculates the density of that community.
 def CalculateDensity(graph, new_community):
-    return .6
+    number_of_nodes = len(new_community)   # Get the number of nodes in the new community
+
+    edges = 0.0
+    for node in new_community:
+        for neighbor in graph[node]:
+            if neighbor in new_community:
+                edges = edges + 1
+
+    density = edges / (number_of_nodes * (number_of_nodes - 1))
+
+    return density
 
 def updateGraph(graph, community):
     # Remove all nodes  (with their edges) that are not linked to any other nodes outside new_community
@@ -54,7 +65,7 @@ def updateGraph(graph, community):
 graph = Graph()
 nodes = []
 
-with open("karate.txt", 'r') as f:
+with open("graph.txt", 'r') as f:
     for line in f.readlines():
         strList = line.split(' ')
 
@@ -81,11 +92,20 @@ while graph.node_count > 0:
     density = 1
     while density >= 0.7:
         # Find the neighbor with the highest degree
-        next_node = FindHighestDegreeNeighbor(graph, node)
+        next_node = FindHighestDegreeNeighbor(graph, node, new_community)
+        if next_node is None:
+            break
         new_community.append(next_node)
 
+        #print(new_community)
         density = CalculateDensity(graph, new_community)
         node = next_node
 
     graph = updateGraph(graph, new_community)
     community_list.append(new_community)
+
+    #print(graph)
+    #print(community_list)
+    #exit()
+
+print(community_list)
