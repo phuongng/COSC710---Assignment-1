@@ -18,11 +18,13 @@ def FindHighestDegreeNode (graph):
     return highest_degree_node
 
 
-def FindHighestDegreeNeighbor (graph, node, community):
+def FindHighestDegreeNeighbor (graph, community):
     highest_degree_neighbor = None
-    
-    for neighbor in graph[node]:
-        if neighbor in graph and neighbor not in community:
+
+    for node in community:
+        for neighbor in graph[node]:
+            if neighbor in community:
+                continue
             degree = len(graph[neighbor])
 
             if highest_degree_neighbor is None:
@@ -65,7 +67,7 @@ def updateGraph(graph, community):
 graph = Graph()
 nodes = []
 
-with open("graph.txt", 'r') as f:
+with open("graph_test.txt", 'r') as f:
     for line in f.readlines():
         strList = line.split(' ')
 
@@ -81,31 +83,40 @@ with open("graph.txt", 'r') as f:
 
 community_list = []
 
-while graph.node_count > 0:
+flag = False
+while graph.node_count > 2:
     new_community = []
 
     # Find node with highest degree
     node = FindHighestDegreeNode(graph)
+    next_node = node
 
     new_community.append(node)
 
     density = 1
-    while density >= 0.7:
+    while True:
         # Find the neighbor with the highest degree
-        next_node = FindHighestDegreeNeighbor(graph, node, new_community)
+        next_node = FindHighestDegreeNeighbor(graph, new_community)
         if next_node is None:
             break
         new_community.append(next_node)
 
-        #print(new_community)
+        print(new_community)
         density = CalculateDensity(graph, new_community)
+
+        if density < .7:
+            new_community.remove(next_node)
+            break
         node = next_node
 
     graph = updateGraph(graph, new_community)
     community_list.append(new_community)
 
-    #print(graph)
-    #print(community_list)
-    #exit()
+    print(graph)
+    print(community_list)
+    if flag:
+        exit()
+    else:
+        flag = True
 
 print(community_list)
