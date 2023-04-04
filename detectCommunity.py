@@ -17,9 +17,16 @@ def FindHighestDegreeNode (graph):
 
     return highest_degree_node
 
+def overlap (a1, a2):
+    count = 0
+    for i in a1:
+        if i in a2:
+            count = count + 1
+    return count
 
 def FindHighestDegreeNeighbor (graph, community):
     highest_degree_neighbor = None
+    highest_overlap = None
 
     for node in community:
         for neighbor in graph[node]:
@@ -29,8 +36,18 @@ def FindHighestDegreeNeighbor (graph, community):
 
             if highest_degree_neighbor is None:
                 highest_degree_neighbor = neighbor
+                highest_overlap = overlap(graph[neighbor],community)
             elif degree > len(graph[highest_degree_neighbor]):
                 highest_degree_neighbor = neighbor
+            elif degree == len(graph[highest_degree_neighbor]):
+
+                # Overlap 1
+                o = overlap(community, graph[neighbor])
+
+                if o > highest_overlap:
+                    highest_degree_neighbor = neighbor
+                    highest_overlap = o
+
 
     return highest_degree_neighbor
 
@@ -67,7 +84,7 @@ def updateGraph(graph, community):
 graph = Graph()
 nodes = []
 
-with open("graph_test.txt", 'r') as f:
+with open("graph.txt", 'r') as f:
     for line in f.readlines():
         strList = line.split(' ')
 
@@ -83,7 +100,6 @@ with open("graph_test.txt", 'r') as f:
 
 community_list = []
 
-flag = False
 while graph.node_count > 2:
     new_community = []
 
@@ -101,22 +117,16 @@ while graph.node_count > 2:
             break
         new_community.append(next_node)
 
-        print(new_community)
+        # print(new_community)
         density = CalculateDensity(graph, new_community)
+        # print(density)
 
-        if density < .7:
+        if density < 0.7:
             new_community.remove(next_node)
             break
         node = next_node
 
     graph = updateGraph(graph, new_community)
     community_list.append(new_community)
-
-    print(graph)
-    print(community_list)
-    if flag:
-        exit()
-    else:
-        flag = True
 
 print(community_list)
