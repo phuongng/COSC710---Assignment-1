@@ -2,7 +2,6 @@
 import os
 from dijkstar import Graph
 from decimal import Decimal
-import pandas as pd
 
 #Methods
 def FindHighestDegreeNode (graph):
