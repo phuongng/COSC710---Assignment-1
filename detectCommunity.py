@@ -24,32 +24,29 @@ def overlap (a1, a2):
             count = count + 1
     return count
 
-def FindHighestDegreeNeighbor (graph, community):
-    highest_degree_neighbor = None
+def FindHighestDegreeNeighbor(graph, community):
+    highest_overlap_neighbor = None
     highest_overlap = None
 
     for node in community:
         for neighbor in graph[node]:
             if neighbor in community:
                 continue
-            degree = len(graph[neighbor])
 
-            if highest_degree_neighbor is None:
-                highest_degree_neighbor = neighbor
-                highest_overlap = overlap(graph[neighbor],community)
-            elif degree > len(graph[highest_degree_neighbor]):
-                highest_degree_neighbor = neighbor
-            elif degree == len(graph[highest_degree_neighbor]):
-
-                # Overlap 1
-                o = overlap(community, graph[neighbor])
-
-                if o > highest_overlap:
-                    highest_degree_neighbor = neighbor
+            o = overlap(community, graph[neighbor])
+            if highest_overlap is None:
+                highest_overlap_neighbor = neighbor
+                highest_overlap = o
+            elif o > highest_overlap:
+                highest_overlap_neighbor = neighbor
+                highest_overlap = o
+            elif o == highest_overlap:
+                if len(graph[neighbor]) > len(graph[highest_overlap_neighbor]):
+                    highest_overlap_neighbor = neighbor
                     highest_overlap = o
 
 
-    return highest_degree_neighbor
+    return highest_overlap_neighbor
 
 
 # The `CalculateDensity` function takes a graph object and a list of nodes representing a community and calculates the density of that community.
@@ -84,7 +81,7 @@ def updateGraph(graph, community):
 graph = Graph()
 nodes = []
 
-with open("graph.txt", 'r') as f:
+with open("blue.txt", 'r') as f:
     for line in f.readlines():
         strList = line.split(' ')
 
