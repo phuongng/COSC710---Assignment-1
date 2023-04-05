@@ -25,54 +25,6 @@ with open("graph_test.txt", 'r') as f:
 community_list = []
 
 
-# Different Attempt ---------------------------------------------------
-new_community_list = []
-density_list = []
-
-for node in nodes:
-    if node in graph:
-        new_community1 = []
-        new_community1.append(node)
-        neighbors = graph[node]
-        degree = len(neighbors)
-
-        if degree > 1:
-            #Find neighbors of current neighbor of current node
-            for node1 in neighbors:
-                neighborsNext = graph.get(node1, [])
-                if node1 not in new_community1:
-                    new_community1.append(node1)
-                density = CalculateDensity(graph, new_community1)
-                
-                #Check if first neighbor has similar neighbor as current node
-                for node2 in neighborsNext:
-                    if node2 in neighbors:
-                        if node2 not in new_community1:
-                            new_community1.append(node2)
-                        
-                        density = CalculateDensity(graph, new_community1)
-                        if density < 0.7:
-                            new_community1.remove(node2)
-                            density = CalculateDensity(graph, new_community1)
-                            break
-
-        new_community1.sort()
-        density_decimal = Decimal(density).quantize(Decimal("1.000"))
-        density_string = 'Density: ' + str(density_decimal)
-        new_community1.append(density_string)
-        
-        if new_community1 not in new_community_list:
-            if density >= 0.7:
-                if len(new_community1) > 2:
-                    new_community_list.append(new_community1)
-
-
-print("Different Method")
-print(new_community_list)
-print("\n ----------------- \n")
-# End Different Attempt -----------------------------------------------------
-
-
 
 # Our Original Attempt
 def FindHighestDegreeNode (graph):
@@ -151,6 +103,58 @@ def updateGraph(graph, community):
             graph.remove_node(node)
 
     return graph
+
+
+
+# Different Attempt ---------------------------------------------------
+new_community_list = []
+density_list = []
+
+for node in nodes:
+    if node in graph:
+        new_community1 = []
+        new_community1.append(node)
+        neighbors = graph[node]
+        degree = len(neighbors)
+
+        if degree > 1:
+            #Find neighbors of current neighbor of current node
+            for node1 in neighbors:
+                neighborsNext = graph.get(node1, [])
+                if node1 not in new_community1:
+                    new_community1.append(node1)
+                density = CalculateDensity(graph, new_community1)
+                
+                #Check if first neighbor has similar neighbor as current node
+                for node2 in neighborsNext:
+                    if node2 in neighbors:
+                        if node2 not in new_community1:
+                            new_community1.append(node2)
+                        
+                        density = CalculateDensity(graph, new_community1)
+                        if density < 0.7:
+                            new_community1.remove(node2)
+                            density = CalculateDensity(graph, new_community1)
+                            break
+
+        new_community1.sort()
+        density_decimal = Decimal(density).quantize(Decimal("1.000"))
+        density_string = 'Density: ' + str(density_decimal)
+        new_community1.append(density_string)
+        
+        if new_community1 not in new_community_list:
+            if density >= 0.7:
+                if len(new_community1) > 2:
+                    new_community_list.append(new_community1)
+
+
+print("Different Method")
+print(new_community_list)
+print("\n ----------------- \n")
+# End Different Attempt -----------------------------------------------------
+
+
+
 
 
 while graph.node_count > 2:
