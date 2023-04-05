@@ -3,7 +3,78 @@ import os
 from dijkstar import Graph
 from decimal import Decimal
 
-#Methods
+
+# Read graph file
+graph = Graph()
+nodes = []
+
+with open("graph_test.txt", 'r') as f:
+    for line in f.readlines():
+        strList = line.split(' ')
+
+        # Edge has to be added both ways since the data structure doesn't support undirected graphs
+        graph.add_edge(int(strList[0]), int(strList[1]), 1)
+        graph.add_edge(int(strList[1]), int(strList[0]), 1)
+
+        # Create a node list
+        if int(strList[0]) not in nodes:
+            nodes.append(int(strList[0]))
+        if int(strList[1]) not in nodes:
+            nodes.append(int(strList[1]))
+
+community_list = []
+
+
+# Different Attempt ---------------------------------------------------
+new_community_list = []
+density_list = []
+
+for node in nodes:
+    if node in graph:
+        new_community1 = []
+        new_community1.append(node)
+        neighbors = graph[node]
+        degree = len(neighbors)
+
+        if degree > 1:
+            #Find neighbors of current neighbor of current node
+            for node1 in neighbors:
+                neighborsNext = graph.get(node1, [])
+                if node1 not in new_community1:
+                    new_community1.append(node1)
+                density = CalculateDensity(graph, new_community1)
+                
+                #Check if first neighbor has similar neighbor as current node
+                for node2 in neighborsNext:
+                    if node2 in neighbors:
+                        if node2 not in new_community1:
+                            new_community1.append(node2)
+                        
+                        density = CalculateDensity(graph, new_community1)
+                        if density < 0.7:
+                            new_community1.remove(node2)
+                            density = CalculateDensity(graph, new_community1)
+                            break
+
+        new_community1.sort()
+        density_decimal = Decimal(density).quantize(Decimal("1.000"))
+        density_string = 'Density: ' + str(density_decimal)
+        new_community1.append(density_string)
+        
+        if new_community1 not in new_community_list:
+            if density >= 0.7:
+                if len(new_community1) > 2:
+                    new_community_list.append(new_community1)
+
+
+print("Different Method")
+print(new_community_list)
+print("\n ----------------- \n")
+# End Different Attempt -----------------------------------------------------
+
+
+
+# Our Original Attempt
 def FindHighestDegreeNode (graph):
     highest_degree_node = None
 
@@ -82,75 +153,6 @@ def updateGraph(graph, community):
     return graph
 
 
-# Read graph file
-graph = Graph()
-nodes = []
-
-with open("graph_test.txt", 'r') as f:
-    for line in f.readlines():
-        strList = line.split(' ')
-
-        # Edge has to be added both ways since the data structure doesn't support undirected graphs
-        graph.add_edge(int(strList[0]), int(strList[1]), 1)
-        graph.add_edge(int(strList[1]), int(strList[0]), 1)
-
-        # Create a node list
-        if int(strList[0]) not in nodes:
-            nodes.append(int(strList[0]))
-        if int(strList[1]) not in nodes:
-            nodes.append(int(strList[1]))
-
-community_list = []
-
-# Different Method ---------------------------------------------------
-new_community_list = []
-density_list = []
-
-for node in nodes:
-    if node in graph:
-        new_community1 = []
-        new_community1.append(node)
-        neighbors = graph[node]
-        degree = len(neighbors)
-
-        if degree > 1:
-            #Find neighbors of current neighbor of current node
-            for node1 in neighbors:
-                neighborsNext = graph.get(node1, [])
-                if node1 not in new_community1:
-                    new_community1.append(node1)
-                density = CalculateDensity(graph, new_community1)
-                
-                #Check if first neighbor has similar neighbor as current node
-                for node2 in neighborsNext:
-                    if node2 in neighbors:
-                        if node2 not in new_community1:
-                            new_community1.append(node2)
-                        
-                        density = CalculateDensity(graph, new_community1)
-                        if density < 0.7:
-                            new_community1.remove(node2)
-                            density = CalculateDensity(graph, new_community1)
-                            break
-
-        new_community1.sort()
-        density_decimal = Decimal(density).quantize(Decimal("1.000"))
-        density_string = 'Density: ' + str(density_decimal)
-        new_community1.append(density_string)
-        
-        if new_community1 not in new_community_list:
-            if density >= 0.7:
-                if len(new_community1) > 2:
-                    new_community_list.append(new_community1)
-
-
-print("Different Method")
-print(new_community_list)
-print("\n ----------------- \n")
-# End Different Method -----------------------------------------------------
-
-
-
 while graph.node_count > 2:
     new_community = []
 
@@ -190,6 +192,7 @@ print(community_list)
 
 
 
+# Combine Results of Both Attempts
 all_communities = []
 for i in community_list:
     if i not in new_community_list:
