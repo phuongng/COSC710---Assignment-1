@@ -102,7 +102,7 @@ with open("graph_test.txt", 'r') as f:
 
 community_list = []
 
-# Begin Teacher Suggested Method ---------------------------------------------------
+# Different Method ---------------------------------------------------
 new_community_list = []
 density_list = []
 
@@ -142,10 +142,10 @@ for node in nodes:
                 new_community_list.append(new_community1)
 
 
-print("Teacher Suggested Method")
+print("Different Method")
 print(new_community_list)
 print("\n ----------------- \n")
-# End Teacher Suggested Method -----------------------------------------------------
+# End Different Method -----------------------------------------------------
 
 
 
@@ -183,7 +183,7 @@ while graph.node_count > 2:
     new_community.append(density_string)
     community_list.append(new_community)
 
-print("Our Method")
+print("Our Original Method")
 print(community_list)
 
 
