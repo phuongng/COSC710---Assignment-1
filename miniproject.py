@@ -112,7 +112,6 @@ for node in nodes:
         new_community1.append(node)
         neighbors = graph[node]
         degree = len(neighbors)
-        # print(f'Node {node}: {neighbors}')
 
         if degree > 1:
             #Find neighbors of current neighbor of current node
@@ -121,13 +120,14 @@ for node in nodes:
                 if node1 not in new_community1:
                     new_community1.append(node1)
                 density = CalculateDensity(graph, new_community1)
+                
                 #Check if first neighbor has similar neighbor as current node
                 for node2 in neighborsNext:
                     if node2 in neighbors:
                         if node2 not in new_community1:
                             new_community1.append(node2)
+                        
                         density = CalculateDensity(graph, new_community1)
-                        #print(new_community)
                         if density < 0.7:
                             new_community1.remove(node2)
                             density = CalculateDensity(graph, new_community1)
@@ -137,6 +137,7 @@ for node in nodes:
         density_decimal = Decimal(density).quantize(Decimal("1.000"))
         density_string = 'Density: ' + str(density_decimal)
         new_community1.append(density_string)
+        
         if new_community1 not in new_community_list:
             if density >= 0.7:
                 if len(new_community1) > 2:
