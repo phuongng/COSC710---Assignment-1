@@ -139,7 +139,8 @@ for node in nodes:
         new_community1.append(density_string)
         if new_community1 not in new_community_list:
             if density >= 0.7:
-                new_community_list.append(new_community1)
+                if len(new_community1) > 2:
+                    new_community_list.append(new_community1)
 
 
 print("Different Method")
